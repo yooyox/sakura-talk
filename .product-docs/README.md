@@ -23,9 +23,11 @@
 2. [用户场景分析](./02-user-scenarios.md)
 3. [功能规格说明](./03-features.md)
 4. [UI/UX设计](./04-ui-ux.md)
-5. [技术架构](./05-architecture.md)
-6. [API设计](./06-api-design.md)
-7. [数据模型](./07-data-model.md)
+5. [App图标设计](./05-app-icon.md)
+6. [提示与状态设计](./06-prompts-states.md)
+7. [设置页面设计](./07-settings.md)
+8. [字体排版设计](./08-font-typography.md)
+9. [UI设计规范](./09-ui-design-system.md) ⭐ 新增
 
 ---
 
