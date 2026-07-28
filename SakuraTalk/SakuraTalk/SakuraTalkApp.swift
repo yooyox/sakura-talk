@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct SakuraTalkApp: App {
@@ -6,5 +7,6 @@ struct SakuraTalkApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [Conversation.self, Message.self, PhotoTranslation.self])
     }
 }

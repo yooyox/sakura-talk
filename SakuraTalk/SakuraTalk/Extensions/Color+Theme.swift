@@ -10,6 +10,12 @@ extension Color {
     // MARK: - 背景色
     static let background = Color.white
     static let secondaryBackground = Color.black.opacity(0.03)
+
+    // MARK: - 莫兰迪色系
+    /// 莫兰迪红色 - 柔和的玫瑰粉红
+    static let morandiRed = Color(hex: "C5A3A3")
+    /// 莫兰迪灰色 - 柔和的灰
+    static let morandiGray = Color(hex: "A3A3A3")
 }
 
 // MARK: - 十六进制初始化
