@@ -18,6 +18,13 @@
 		1A1A1A1A1A1A1A1A1A00009 /* HistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000011 /* HistoryViewModel.swift */; };
 		1A1A1A1A1A1A1A1A1A00010 /* ConversationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000012 /* ConversationDetailView.swift */; };
 		1A1A1A1A1A1A1A1A1A00011 /* PhotoTranslationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000013 /* PhotoTranslationDetailView.swift */; };
+		1A1A1A1A1A1A1A1A1A00012 /* TranslationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000014 /* TranslationService.swift */; };
+		1A1A1A1A1A1A1A1A1A00013 /* ConversationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000015 /* ConversationViewModel.swift */; };
+		1A1A1A1A1A1A1A1A1A00014 /* ChatBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000016 /* ChatBubbleView.swift */; };
+		1A1A1A1A1A1A1A1A1A00015 /* ConversationInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000017 /* ConversationInputView.swift */; };
+		1A1A1A1A1A1A1A1A1A00016 /* LoadingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000018 /* LoadingOverlay.swift */; };
+		1A1A1A1A1A1A1A1A1A00017 /* LanguageDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000019 /* LanguageDetector.swift */; };
+		1A1A1A1A1A1A1A1A1A00018 /* TextSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0000001000000000000020 /* TextSelectionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +41,13 @@
 		A0000001000000000000011 /* HistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewModel.swift; sourceTree = "<group>"; };
 		A0000001000000000000012 /* ConversationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDetailView.swift; sourceTree = "<group>"; };
 		A0000001000000000000013 /* PhotoTranslationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoTranslationDetailView.swift; sourceTree = "<group>"; };
+		A0000001000000000000014 /* TranslationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationService.swift; sourceTree = "<group>"; };
+		A0000001000000000000015 /* ConversationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationViewModel.swift; sourceTree = "<group>"; };
+		A0000001000000000000016 /* ChatBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubbleView.swift; sourceTree = "<group>"; };
+		A0000001000000000000017 /* ConversationInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationInputView.swift; sourceTree = "<group>"; };
+		A0000001000000000000018 /* LoadingOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingOverlay.swift; sourceTree = "<group>"; };
+		A0000001000000000000019 /* LanguageDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageDetector.swift; sourceTree = "<group>"; };
+		A0000001000000000000020 /* TextSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextSelectionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +77,8 @@
 				C0000001000000000000004 /* Extensions */,
 				C0000001000000000000005 /* Constants */,
 				C0000001000000000000006 /* Models */,
+				C0000001000000000000009 /* Services */,
+				C0000001000000000000012 /* Utils */,
 				C0000001000000000000007 /* ViewModels */,
 				C0000001000000000000008 /* Views */,
 				A0000001000000000000005 /* Assets.xcassets */,
@@ -109,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				A0000001000000000000011 /* HistoryViewModel.swift */,
+				A0000001000000000000015 /* ConversationViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -118,8 +135,44 @@
 			children = (
 				A0000001000000000000012 /* ConversationDetailView.swift */,
 				A0000001000000000000013 /* PhotoTranslationDetailView.swift */,
+				C0000001000000000000010 /* Conversation */,
+				C0000001000000000000011 /* Components */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		C0000001000000000000009 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A0000001000000000000014 /* TranslationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		C0000001000000000000010 /* Conversation */ = {
+			isa = PBXGroup;
+			children = (
+				A0000001000000000000016 /* ChatBubbleView.swift */,
+				A0000001000000000000017 /* ConversationInputView.swift */,
+			);
+			path = Conversation;
+			sourceTree = "<group>";
+		};
+		C0000001000000000000011 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A0000001000000000000018 /* LoadingOverlay.swift */,
+				A0000001000000000000020 /* TextSelectionView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		C0000001000000000000012 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				A0000001000000000000019 /* LanguageDetector.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -201,6 +254,13 @@
 				1A1A1A1A1A1A1A1A1A00009 /* HistoryViewModel.swift in Sources */,
 				1A1A1A1A1A1A1A1A1A00010 /* ConversationDetailView.swift in Sources */,
 				1A1A1A1A1A1A1A1A1A00011 /* PhotoTranslationDetailView.swift in Sources */,
+				1A1A1A1A1A1A1A1A1A00012 /* TranslationService.swift in Sources */,
+				1A1A1A1A1A1A1A1A1A00013 /* ConversationViewModel.swift in Sources */,
+				1A1A1A1A1A1A1A1A1A00014 /* ChatBubbleView.swift in Sources */,
+				1A1A1A1A1A1A1A1A1A00015 /* ConversationInputView.swift in Sources */,
+				1A1A1A1A1A1A1A1A1A00016 /* LoadingOverlay.swift in Sources */,
+				1A1A1A1A1A1A1A1A1A00017 /* LanguageDetector.swift in Sources */,
+				1A1A1A1A1A1A1A1A1A00018 /* TextSelectionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,7 +304,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 6ZRTL8H8DH;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -270,7 +330,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "需要使用相机来拍摄并翻译图片中的文字";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要使用麦克风来录制语音进行翻译";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "需要使用语音识别功能来将语音转换为文字";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -327,7 +387,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 6ZRTL8H8DH;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -347,7 +407,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "需要使用相机来拍摄并翻译图片中的文字";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要使用麦克风来录制语音进行翻译";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "需要使用语音识别功能来将语音转换为文字";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -416,7 +476,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -471,7 +531,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;

@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "SakuraTalk",
     platforms: [
-        .iOS(.v17)
+        .iOS(.v26)
     ],
     products: [
         .library(

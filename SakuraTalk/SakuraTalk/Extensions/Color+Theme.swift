@@ -16,6 +16,12 @@ extension Color {
     static let morandiRed = Color(hex: "C5A3A3")
     /// 莫兰迪灰色 - 柔和的灰
     static let morandiGray = Color(hex: "A3A3A3")
+
+    // MARK: - 强调色（UI 设计规范）
+    /// 雾霾蓝绿 - 主按钮、中文气泡
+    static let hazeBlueGreen = Color(hex: "7D9B9D")
+    /// 气泡灰 - 日语气泡背景
+    static let bubbleGray = Color(hex: "F2F2F2")
 }
 
 // MARK: - 十六进制初始化

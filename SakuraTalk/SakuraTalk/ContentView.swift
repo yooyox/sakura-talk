@@ -13,78 +13,34 @@ struct ContentView: View {
                 .tabItem {
                     Image(systemName: "camera")
                 }
-
-            HistoryView()
-                .tabItem {
-                    Image(systemName: "clock")
-                }
         }
         .tint(.black)
     }
 }
 
-// MARK: - 对话视图
+// MARK: - 对话视图（双人输入模式）
 struct ConversationView: View {
+    @Environment(\.modelContext) private var modelContext
+    @State private var viewModel: ConversationViewModel?
+    @State private var showHistory = false
+    @FocusState private var focusedField: InputField?
+
+    enum InputField {
+        case japanese, chinese
+    }
+
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                Spacer()
-
-                // 空状态
-                VStack(spacing: 24) {
-                    Image(systemName: "bubble.left.and.bubble.right")
-                        .font(.system(size: 48, weight: .light))
-                        .foregroundStyle(.black.opacity(0.2))
-
-                    VStack(spacing: 8) {
-                        Text("开始对话")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundStyle(.black)
-
-                        Text("点击下方按钮开始翻译对话")
-                            .font(.system(size: 15))
-                            .foregroundStyle(.black.opacity(0.5))
-                    }
-                }
-
-                Spacer()
-
-                // 底部按钮
-                VStack(spacing: 12) {
-                    Button {
-                        // 文字输入
-                    } label: {
-                        HStack {
-                            Image(systemName: "keyboard")
-                            Text("文字输入")
+            Group {
+                if let vm = viewModel {
+                    chatContent(vm)
+                } else {
+                    Color.white
+                        .onAppear {
+                            viewModel = ConversationViewModel(modelContext: modelContext)
                         }
-                        .font(.system(size: 17, weight: .medium))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 54)
-                        .background(.black)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
-
-                    Button {
-                        // 语音输入
-                    } label: {
-                        HStack {
-                            Image(systemName: "mic")
-                            Text("语音对话")
-                        }
-                        .font(.system(size: 17))
-                        .foregroundStyle(.black)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 54)
-                        .background(.black.opacity(0.05))
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                    }
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 32)
             }
-            .background(.white)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -92,8 +48,235 @@ struct ConversationView: View {
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.black)
                 }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                        Menu {
+                            Button {
+                                showHistory = true
+                            } label: {
+                                Label("历史对话", systemImage: "clock")
+                            }
+
+                            if let vm = viewModel, vm.hasMessages {
+                                Divider()
+
+                                Button {
+                                    vm.saveConversation()
+                                } label: {
+                                    Label("保存对话", systemImage: "square.and.arrow.down")
+                                }
+
+                                Button(role: .destructive) {
+                                    vm.clearConversation()
+                                } label: {
+                                    Label("清空对话", systemImage: "trash")
+                                }
+                            }
+                        } label: {
+                            Image(systemName: "ellipsis.circle")
+                                .foregroundStyle(.black.opacity(0.6))
+                        }
+                    }
             }
         }
+    }
+
+    // MARK: - 聊天主界面
+    @ViewBuilder
+    private func chatContent(_ vm: ConversationViewModel) -> some View {
+        VStack(spacing: 0) {
+            // 消息列表（占满剩余空间）
+            ScrollViewReader { proxy in
+                ScrollView {
+                    if vm.messages.isEmpty {
+                        // 空状态 - 居中显示
+                        emptyStateView
+                            .frame(minHeight: 300)
+                    } else {
+                        LazyVStack(spacing: 16) {
+                            ForEach(vm.messages) { message in
+                                ChatBubbleView(message: message)
+                                    .id(message.id)
+                                    .contextMenu {
+                                        Button(role: .destructive) {
+                                            vm.deleteMessage(message)
+                                        } label: {
+                                            Label("删除", systemImage: "trash")
+                                        }
+                                    }
+                            }
+                        }
+                        .padding(.vertical, 16)
+                    }
+                }
+                .frame(maxHeight: .infinity)
+                .scrollDismissesKeyboard(.immediately)
+                .onTapGesture {
+                    focusedField = nil
+                }
+                .onChange(of: vm.messages.count) {
+                    if let lastMessage = vm.messages.last {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            proxy.scrollTo(lastMessage.id, anchor: .bottom)
+                        }
+                    }
+                }
+            }
+
+            // 分隔线
+            Rectangle()
+                .fill(Color.black.opacity(0.08))
+                .frame(height: 0.5)
+
+            // 底部双人输入栏（紧凑）
+            dualInputBar(vm)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .background(Color(hex: "F5F5F5"))
+        .overlay {
+            if vm.isLoading {
+                LoadingOverlay(message: "正在翻译...")
+            }
+        }
+        .alert("提示", isPresented: .init(
+            get: { vm.errorMessage != nil },
+            set: { if !$0 { vm.clearError() } }
+        )) {
+            Button("确定") { vm.clearError() }
+        } message: {
+            Text(vm.errorMessage ?? "")
+        }
+        .sheet(isPresented: $showHistory) {
+            HistoryView()
+        }
+    }
+
+    // MARK: - 复制消息（复制原语言）
+    private func copyMessage(_ message: Message) {
+        UIPasteboard.general.string = message.sourceText
+    }
+
+    // MARK: - 空状态
+    private var emptyStateView: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "bubble.left.and.bubble.right")
+                .font(.system(size: 44, weight: .light))
+                .foregroundStyle(.black.opacity(0.12))
+
+            VStack(spacing: 6) {
+                Text("开始对话")
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundStyle(.black.opacity(0.5))
+
+                Text("左边输入日文，右边输入中文")
+                    .font(.system(size: 13))
+                    .foregroundStyle(.black.opacity(0.3))
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    // MARK: - 双人输入栏
+    private func dualInputBar(_ vm: ConversationViewModel) -> some View {
+        HStack(spacing: 0) {
+            // 左侧 - 日文输入
+            japaneseInputPanel(vm: vm)
+
+            // 中间分隔线
+            Rectangle()
+                .fill(Color.black.opacity(0.08))
+                .frame(width: 0.5)
+
+            // 右侧 - 中文输入
+            chineseInputPanel(vm: vm)
+        }
+        .background(.white)
+    }
+
+    // MARK: - 日文输入面板（左侧）
+    private func japaneseInputPanel(vm: ConversationViewModel) -> some View {
+        @Bindable var bindableVM = vm
+        return HStack(alignment: .bottom, spacing: 8) {
+            // 话筒
+            Button {
+                // TODO: 语音输入
+            } label: {
+                Image(systemName: "mic")
+                    .font(.system(size: 18))
+                    .foregroundStyle(.black.opacity(0.4))
+                    .frame(width: 32, height: 32)
+            }
+
+            // 输入框（随内容自动扩展，最多5行）
+            TextField("日本語を入力", text: $bindableVM.japaneseInputText, axis: .vertical)
+                .font(.system(size: 16))
+                .lineLimit(1...5)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(Color(hex: "F5F5F5"))
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .focused($focusedField, equals: .japanese)
+                .autocorrectionDisabled()
+
+            // 发送按钮
+            if !vm.isJapaneseInputEmpty {
+                Button {
+                    focusedField = nil
+                    Task { await vm.sendJapanese() }
+                } label: {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .font(.system(size: 30))
+                        .foregroundStyle(.black.opacity(0.7))
+                }
+                .transition(.scale.combined(with: .opacity))
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
+        .animation(.easeInOut(duration: 0.2), value: vm.isJapaneseInputEmpty)
+    }
+
+    // MARK: - 中文输入面板（右侧）
+    private func chineseInputPanel(vm: ConversationViewModel) -> some View {
+        @Bindable var bindableVM = vm
+        return HStack(alignment: .bottom, spacing: 8) {
+            // 发送按钮
+            if !vm.isChineseInputEmpty {
+                Button {
+                    focusedField = nil
+                    Task { await vm.sendChinese() }
+                } label: {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .font(.system(size: 30))
+                        .foregroundStyle(Color.hazeBlueGreen)
+                }
+                .transition(.scale.combined(with: .opacity))
+            }
+
+            // 输入框（随内容自动扩展，最多5行）
+            TextField("输入中文", text: $bindableVM.chineseInputText, axis: .vertical)
+                .font(.system(size: 16))
+                .lineLimit(1...5)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 10)
+                .background(Color(hex: "F5F5F5"))
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .focused($focusedField, equals: .chinese)
+                .autocorrectionDisabled()
+
+            // 话筒
+            Button {
+                // TODO: 语音输入
+            } label: {
+                Image(systemName: "mic")
+                    .font(.system(size: 18))
+                    .foregroundStyle(.black.opacity(0.4))
+                    .frame(width: 32, height: 32)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
+        .animation(.easeInOut(duration: 0.2), value: vm.isChineseInputEmpty)
     }
 }
 
