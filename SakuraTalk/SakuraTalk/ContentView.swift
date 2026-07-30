@@ -23,6 +23,7 @@ struct ConversationView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var viewModel: ConversationViewModel?
     @State private var showHistory = false
+    @State private var activeMenuMessage: Message?
     @FocusState private var focusedField: InputField?
 
     enum InputField {
@@ -97,11 +98,25 @@ struct ConversationView: View {
                             ForEach(vm.messages) { message in
                                 ChatBubbleView(message: message)
                                     .id(message.id)
-                                    .contextMenu {
-                                        Button(role: .destructive) {
-                                            vm.deleteMessage(message)
-                                        } label: {
-                                            Label("删除", systemImage: "trash")
+                                    .overlay(alignment: .top) {
+                                        if message.id == activeMenuMessage?.id {
+                                            BubbleFloatingMenu(
+                                                onCopy: {
+                                                    UIPasteboard.general.string = message.sourceText
+                                                    activeMenuMessage = nil
+                                                },
+                                                onDelete: {
+                                                    vm.deleteMessage(message)
+                                                    activeMenuMessage = nil
+                                                }
+                                            )
+                                            .offset(y: -40)
+                                            .transition(.scale(scale: 0.8, anchor: .bottom).combined(with: .opacity))
+                                        }
+                                    }
+                                    .onLongPressGesture {
+                                        withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
+                                            activeMenuMessage = message
                                         }
                                     }
                             }
@@ -113,6 +128,9 @@ struct ConversationView: View {
                 .scrollDismissesKeyboard(.immediately)
                 .onTapGesture {
                     focusedField = nil
+                    withAnimation(.easeOut(duration: 0.15)) {
+                        activeMenuMessage = nil
+                    }
                 }
                 .onChange(of: vm.messages.count) {
                     if let lastMessage = vm.messages.last {
@@ -226,7 +244,7 @@ struct ConversationView: View {
                 } label: {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.system(size: 30))
-                        .foregroundStyle(.black.opacity(0.7))
+                        .foregroundStyle(.black)
                 }
                 .transition(.scale.combined(with: .opacity))
             }
@@ -248,7 +266,7 @@ struct ConversationView: View {
                 } label: {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.system(size: 30))
-                        .foregroundStyle(Color.hazeBlueGreen)
+                        .foregroundStyle(.black)
                 }
                 .transition(.scale.combined(with: .opacity))
             }
@@ -1062,6 +1080,54 @@ struct EmptyStateView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+// MARK: - 气泡悬浮菜单（小红书风格）
+struct BubbleFloatingMenu: View {
+    let onCopy: () -> Void
+    let onDelete: () -> Void
+
+    var body: some View {
+        HStack(spacing: 0) {
+            // 复制
+            Button(action: onCopy) {
+                HStack(spacing: 5) {
+                    Image(systemName: "doc.on.doc")
+                        .font(.system(size: 13))
+                    Text("复制")
+                        .font(.system(size: 14))
+                        .fixedSize()
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 9)
+            }
+
+            // 分隔线
+            Rectangle()
+                .fill(Color.white.opacity(0.25))
+                .frame(width: 0.5, height: 16)
+
+            // 删除
+            Button(action: onDelete) {
+                HStack(spacing: 5) {
+                    Image(systemName: "trash")
+                        .font(.system(size: 13))
+                    Text("删除")
+                        .font(.system(size: 14))
+                        .fixedSize()
+                }
+                .foregroundStyle(.white)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 9)
+            }
+        }
+        .background(
+            Capsule()
+                .fill(Color.black.opacity(0.85))
+                .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
+        )
     }
 }
 

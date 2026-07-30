@@ -18,10 +18,10 @@ extension Color {
     static let morandiGray = Color(hex: "A3A3A3")
 
     // MARK: - 强调色（UI 设计规范）
-    /// 雾霾蓝绿 - 主按钮、中文气泡
+    /// 雾霾蓝绿 - 保留的强调色
     static let hazeBlueGreen = Color(hex: "7D9B9D")
-    /// 气泡灰 - 日语气泡背景
-    static let bubbleGray = Color(hex: "F2F2F2")
+    /// 中文气泡灰 - 右侧（中文/自己）气泡背景
+    static let bubbleGray = Color(hex: "E4E4E4")
 }
 
 // MARK: - 十六进制初始化

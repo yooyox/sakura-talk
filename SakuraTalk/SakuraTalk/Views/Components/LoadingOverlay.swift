@@ -1,31 +1,26 @@
 import SwiftUI
 
-/// 加载状态覆盖层
+/// 加载状态覆盖层（轻量，不遮挡屏幕）
 struct LoadingOverlay: View {
     let message: String
 
     var body: some View {
-        ZStack {
-            // 半透明黑色背景
-            Color.black.opacity(0.3)
-                .ignoresSafeArea()
+        VStack(spacing: 10) {
+            ProgressView()
+                .scaleEffect(1.1)
+                .tint(.black.opacity(0.6))
 
-            // 加载指示器
-            VStack(spacing: 16) {
-                ProgressView()
-                    .scaleEffect(1.2)
-                    .tint(.white)
-
-                Text(message)
-                    .font(.system(size: 15))
-                    .foregroundStyle(.white)
-            }
-            .padding(32)
-            .background(
-                RoundedRectangle(cornerRadius: CornerRadius.large)
-                    .fill(Color.black.opacity(0.8))
-            )
+            Text(message)
+                .font(.system(size: 13))
+                .foregroundStyle(.black.opacity(0.5))
         }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(.white)
+                .shadow(color: .black.opacity(0.08), radius: 12, y: 4)
+        )
     }
 }
 

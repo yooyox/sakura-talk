@@ -1,13 +1,23 @@
 import SwiftUI
 
-/// 聊天气泡视图 - 微信风格
-/// 左侧：日文消息（日本人说的）
-/// 右侧：中文消息（中国人说的）
+/// 聊天气泡视图 - 黑白极简风格
+/// 左侧：日语气泡（白底黑字）
+/// 右侧：中文气泡（灰底黑字，代表"自己"）
 struct ChatBubbleView: View {
     let message: Message
 
     private var isChinese: Bool {
         message.sourceLanguage == .chinese
+    }
+
+    /// 不对称圆角：靠近屏幕边缘的上角收窄，形成指向感
+    private var bubbleShape: UnevenRoundedRectangle {
+        UnevenRoundedRectangle(
+            topLeadingRadius: isChinese ? 18 : 4,
+            bottomLeadingRadius: 18,
+            bottomTrailingRadius: 18,
+            topTrailingRadius: isChinese ? 4 : 18
+        )
     }
 
     var body: some View {
@@ -17,32 +27,37 @@ struct ChatBubbleView: View {
             }
 
             VStack(alignment: isChinese ? .trailing : .leading, spacing: 6) {
-                // 原文（支持文字选取）
+                // 原文
                 Text(message.sourceText)
                     .font(.system(size: 16))
-                    .foregroundStyle(isChinese ? .white : .black)
+                    .foregroundStyle(.black)
                     .multilineTextAlignment(isChinese ? .trailing : .leading)
-                    .textSelection(.enabled)
 
                 // 分隔线
                 Rectangle()
-                    .fill(isChinese ? Color.white.opacity(0.25) : Color.black.opacity(0.08))
+                    .fill(Color.black.opacity(0.08))
                     .frame(height: 0.5)
 
-                // 翻译结果（支持文字选取）
+                // 翻译结果
                 Text(message.translatedText)
                     .font(.system(size: 15))
-                    .foregroundStyle(isChinese ? Color.white.opacity(0.85) : .black.opacity(0.55))
+                    .foregroundStyle(.black.opacity(0.5))
                     .multilineTextAlignment(isChinese ? .trailing : .leading)
-                    .textSelection(.enabled)
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .background(
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(isChinese ? Color.hazeBlueGreen : .white)
+                bubbleShape
+                    .fill(isChinese ? Color.bubbleGray : .white)
                     .shadow(color: .black.opacity(isChinese ? 0 : 0.04), radius: 2, y: 1)
             )
+            .overlay {
+                // 白色气泡加发丝描边，在浅灰背景上保持轮廓清晰
+                if !isChinese {
+                    bubbleShape
+                        .strokeBorder(Color.black.opacity(0.06), lineWidth: 0.5)
+                }
+            }
 
             if !isChinese {
                 Spacer(minLength: 64)
